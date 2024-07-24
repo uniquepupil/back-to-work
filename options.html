@@ -1,26 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Work Reminder Options</title>
-</head>
-<body>
-  <h1>Work Reminder Options</h1>
-  <label for="websites">Websites (comma-separated):</label>
-  <input type="text" id="websites" placeholder="example.com, example.org">
-  <button id="save">Save</button>
-  <script>
-    document.getElementById('save').addEventListener('click', function() {
-      const websites = document.getElementById('websites').value.split(',').map(url => url.trim());
-      chrome.storage.sync.set({websites: websites}, function() {
-        alert('Settings saved!');
+chrome.runtime.onInstalled.addListener(() => {
+    console.log('Service worker registered');
+    chrome.alarms.create("workReminderAlarm", { periodInMinutes: 10 }); // Adjust period as needed
+  });
+  
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === "workReminderAlarm") {
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icon.png',
+        title: 'Reminder',
+        message: 'Time to get back to work!',
+        priority: 1
       });
-    });
-    
-    chrome.storage.sync.get(['websites'], function(result) {
-      if (result.websites) {
-        document.getElementById('websites').value = result.websites.join(', ');
-      }
-    });
-  </script>
-</body>
-</html>
+  
+      // Play a notification sound
+      const audio = new Audio('notification_sound.mp3');
+      audio.play();
+    }
+  });
+  

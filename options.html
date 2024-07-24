@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Work Reminder Options</title>
+</head>
+<body>
+  <h1>Work Reminder Options</h1>
+  <label for="websites">Websites (comma-separated):</label>
+  <input type="text" id="websites" placeholder="example.com, example.org">
+  <button id="save">Save</button>
+  <script>
+    document.getElementById('save').addEventListener('click', function() {
+      const websites = document.getElementById('websites').value.split(',').map(url => url.trim());
+      chrome.storage.sync.set({websites: websites}, function() {
+        alert('Settings saved!');
+      });
+    });
+    
+    chrome.storage.sync.get(['websites'], function(result) {
+      if (result.websites) {
+        document.getElementById('websites').value = result.websites.join(', ');
+      }
+    });
+  </script>
+</body>
+</html>
